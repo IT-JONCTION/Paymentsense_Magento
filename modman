@@ -1,0 +1,11 @@
+skin/frontend/default/default/images/paymentsense.png  skin/frontend/default/default/images/paymentsense.png
+skin/frontend/base/default/images/paymentsense.png  skin/frontend/base/default/images/paymentsense.png
+skin/adminhtml/default/default/paymentsense.js  skin/adminhtml/default/default/paymentsense.js
+app/design/frontend/default/default/template/Paymentsense  app/design/frontend/default/default/template/Paymentsense
+app/design/frontend/base/default/template/paymentsense  app/design/frontend/base/default/template/paymentsense
+app/design/adminhtml/default/default/layout/paymentsense.xml  app/design/adminhtml/default/default/layout/paymentsense.xml
+app/design/adminhtml/default/default/template/paymentsense  app/design/adminhtml/default/default/template/paymentsense
+app/design/adminhtml/default/default/template/payment/info/cc_paymentsense.phtml  app/design/adminhtml/default/default/template/payment/info/cc_paymentsense.phtml
+app/design/adminhtml/base/default/template/paymentsense  app/design/adminhtml/base/default/template/paymentsense
+app/etc/modules/Paymentsense_All.xml  app/etc/modules/Paymentsense_All.xml
+app/code/local/Paymentsense  app/code/local/Paymentsense
