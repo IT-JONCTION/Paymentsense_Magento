@@ -37,11 +37,6 @@
       <Paymentsense>
         <class>Paymentsense_Paymentsense_Block</class>
       </Paymentsense>
-      <payment>
-        <rewrite>
-          <info_cc>Paymentsense_Paymentsense_Block_Payment_Info_Cc</info_cc>
-        </rewrite>
-      </payment>
 	  <checkout>
 		<rewrite>
 		  <cart_totals>Paymentsense_Checkout_Block_Cart_Totals</cart_totals>
