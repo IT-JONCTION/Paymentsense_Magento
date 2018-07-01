@@ -24,109 +24,118 @@ class Paymentsense_Sales_Model_Order_Payment extends Braintree_Payments_Model_Re
      */
     public function place()
    {
-    	Mage::dispatchEvent('sales_order_payment_place_start', array('payment' => $this));
-        $order = $this->getOrder();
+       try {
 
-        $this->setAmountOrdered($order->getTotalDue());
-        $this->setBaseAmountOrdered($order->getBaseTotalDue());
-        $this->setShippingAmount($order->getShippingAmount());
-        $this->setBaseShippingAmount($order->getBaseShippingAmount());
+           Mage::dispatchEvent('sales_order_payment_place_start', array('payment' => $this));
+           $order = $this->getOrder();
 
-        $methodInstance = $this->getMethodInstance();
-        $methodInstance->setStore($order->getStoreId());
+           $this->setAmountOrdered($order->getTotalDue());
+           $this->setBaseAmountOrdered($order->getBaseTotalDue());
+           $this->setShippingAmount($order->getShippingAmount());
+           $this->setBaseShippingAmount($order->getBaseShippingAmount());
 
-        $orderState = Mage_Sales_Model_Order::STATE_NEW;
-        $orderStatus= false;
+           $methodInstance = $this->getMethodInstance();
+           $methodInstance->setStore($order->getStoreId());
 
-        $stateObject = new Varien_Object();
+           $orderState = Mage_Sales_Model_Order::STATE_NEW;
+           $orderStatus= false;
 
-        /**
-         * Do order payment validation on payment method level
-         */
-        $methodInstance->validate();
-        $action = $methodInstance->getConfigPaymentAction();
-        if ($action) {
-            if ($methodInstance->isInitializeNeeded()) {
-                /**
-                 * For method initialization we have to use original config value for payment action
-                 */
-                $methodInstance->initialize($methodInstance->getConfigData('payment_action'), $stateObject);
-            } else {
-                $orderState = Mage_Sales_Model_Order::STATE_PROCESSING;
-                switch ($action) {
-                    case Mage_Payment_Model_Method_Abstract::ACTION_ORDER:
-                        $this->_order($order->getBaseTotalDue());
-                        break;
-                    case Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE:
-                        $this->_authorize(true, $order->getBaseTotalDue()); // base amount will be set inside
-                        $this->setAmountAuthorized($order->getTotalDue());
-                        break;
-                    case Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE:
-                        $this->setAmountAuthorized($order->getTotalDue());
-                        $this->setBaseAmountAuthorized($order->getBaseTotalDue());
-                        $this->capture(null);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-			
-        $this->_createBillingAgreement();
+           $stateObject = new Varien_Object();
 
-        $orderIsNotified = null;
-        
-        if ($order->getIsThreeDSecurePending()) {
-			$orderState = 'pending_payment';
-			$orderStatus = 'csv_pending_threed_secure';
-			$message = '3D Secure authentication need to be completed';
-			$orderIsNotified = false;
-		} else if ($order->getIsHostedPaymentPending()) {
-			$order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, true)->save();
-			$orderStateHelper = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
-			$orderState = 'pending_payment';
-			$orderStatus = 'csv_pending_hosted_payment';
-			$message = 'Hosted Payment need to be completed';
-		} else if ($order->getPayment()->getMethodInstance()->getCode() == 'Paymentsense') {
-			$orderState = 'processing';
-			if(Mage::getModel('Paymentsense/direct')->getConfigData('payment_action') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE_CAPTURE) {
-				$orderStatus = "csv_paid";
-			} else if (Mage::getModel('Paymentsense/direct')->getConfigData('payment_action') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE) {
-				$orderStatus = "csv_preauth";
-			}			
-			$message = '';
-			$orderIsNotified = false;
-		} else if ($stateObject->getState() && $stateObject->getStatus()) {
-            $orderState      = $stateObject->getState();
-            $orderStatus     = $stateObject->getStatus();
-            $orderIsNotified = $stateObject->getIsNotified();		
-		} else {
-			$orderIsNotified = false;
-            $orderStatus = $methodInstance->getConfigData('order_status');
-            if (!$orderStatus) {
-                $orderStatus = $order->getConfig()->getStateDefaultStatus($orderState);
-            }
-        }
-        $isCustomerNotified = (null !== $orderIsNotified) ? $orderIsNotified : $order->getCustomerNoteNotify();
-        $ordernote = $order->getCustomerNote();
-		if ($ordernote) {
-			$order->addStatusToHistory($order->getStatus(), $ordernote, $isCustomerNotified);
-		}		
+           /**
+            * Do order payment validation on payment method level
+            */
+           $methodInstance->validate();
+           $action = $methodInstance->getConfigPaymentAction();
+           if ($action) {
+               if ($methodInstance->isInitializeNeeded()) {
+                   /**
+                    * For method initialization we have to use original config value for payment action
+                    */
+                   $methodInstance->initialize($methodInstance->getConfigData('payment_action'), $stateObject);
+               } else {
+                   $orderState = Mage_Sales_Model_Order::STATE_PROCESSING;
+                   switch ($action) {
+                       case Mage_Payment_Model_Method_Abstract::ACTION_ORDER:
+                           $this->_order($order->getBaseTotalDue());
+                           break;
+                       case Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE:
+                           $this->_authorize(true, $order->getBaseTotalDue()); // base amount will be set inside
+                           $this->setAmountAuthorized($order->getTotalDue());
+                           break;
+                       case Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE_CAPTURE:
+                           $this->setAmountAuthorized($order->getTotalDue());
+                           $this->setBaseAmountAuthorized($order->getBaseTotalDue());
+                           $this->capture(null);
+                           break;
+                       default:
+                           break;
+                   }
+               }
+           }
 
-        // add message if order was put into review during authorization or capture
-        if ($order->getState() == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {
-            if ($message) {
-                $order->addStatusToHistory($order->getStatus(), $message, $isCustomerNotified);
-            }
-        }
-        // add message to history if order state already declared
-        elseif ($order->getState() && ($orderStatus !== $order->getStatus() || $message)) {
-            $order->setState($orderState, $orderStatus, $message, $isCustomerNotified);
-        }
-        // set order state
-        elseif (($order->getState() != $orderState) || ($order->getStatus() != $orderStatus) || $message) {
-            $order->setState($orderState, $orderStatus, $message, $isCustomerNotified);
-        }
+           $this->_createBillingAgreement();
+
+           $orderIsNotified = null;
+
+           if ($order->getIsThreeDSecurePending()) {
+               $orderState = 'pending_payment';
+               $orderStatus = 'csv_pending_threed_secure';
+               $message = '3D Secure authentication need to be completed';
+               $orderIsNotified = false;
+           } else if ($order->getIsHostedPaymentPending()) {
+               $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, true)->save();
+               $orderStateHelper = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
+               $orderState = 'pending_payment';
+               $orderStatus = 'csv_pending_hosted_payment';
+               $message = 'Hosted Payment need to be completed';
+           } else if ($order->getPayment()->getMethodInstance()->getCode() == 'Paymentsense') {
+               $orderState = 'processing';
+               if(Mage::getModel('Paymentsense/direct')->getConfigData('payment_action') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE_CAPTURE) {
+                   $orderStatus = "csv_paid";
+               } else if (Mage::getModel('Paymentsense/direct')->getConfigData('payment_action') == Mage_Paygate_Model_Authorizenet::ACTION_AUTHORIZE) {
+                   $orderStatus = "csv_preauth";
+               }
+               $message = '';
+               $orderIsNotified = false;
+           } else if ($stateObject->getState() && $stateObject->getStatus()) {
+               $orderState      = $stateObject->getState();
+               $orderStatus     = $stateObject->getStatus();
+               $orderIsNotified = $stateObject->getIsNotified();
+           } else {
+               $orderIsNotified = false;
+               $orderStatus = $methodInstance->getConfigData('order_status');
+               if (!$orderStatus) {
+                   $orderStatus = $order->getConfig()->getStateDefaultStatus($orderState);
+               }
+           }
+           $isCustomerNotified = (null !== $orderIsNotified) ? $orderIsNotified : $order->getCustomerNoteNotify();
+           $ordernote = $order->getCustomerNote();
+           if ($ordernote) {
+               $order->addStatusToHistory($order->getStatus(), $ordernote, $isCustomerNotified);
+           }
+
+           // add message if order was put into review during authorization or capture
+           if ($order->getState() == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {
+               if ($message) {
+                   $order->addStatusToHistory($order->getStatus(), $message, $isCustomerNotified);
+               }
+           }
+           // add message to history if order state already declared
+           elseif ($order->getState() && ($orderStatus !== $order->getStatus() || $message)) {
+               $order->setState($orderState, $orderStatus, $message, $isCustomerNotified);
+           }
+           // set order state
+           elseif (($order->getState() != $orderState) || ($order->getStatus() != $orderStatus) || $message) {
+               $order->setState($orderState, $orderStatus, $message, $isCustomerNotified);
+           }
+
+           //remember to save
+           $order->save();
+
+       } catch (Exception $e) {
+           Mage::logException($e);
+       }
 
         Mage::dispatchEvent('sales_order_payment_place_end', array('payment' => $this));
 
