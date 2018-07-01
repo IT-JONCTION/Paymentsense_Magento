@@ -24,7 +24,7 @@ class Paymentsense_Sales_Model_Order_Payment extends Braintree_Payments_Model_Re
      */
     public function place()
    {
-       
+
        Mage::dispatchEvent('sales_order_payment_place_start', array('payment' => $this));
 
        try {

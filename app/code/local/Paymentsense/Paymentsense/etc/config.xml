@@ -13,7 +13,7 @@
       </Paymentsense>
     </models>
     <resources>
-      <Paymentsense_setup>
+      <paymentsense_setup>
         <setup>
           <module>Paymentsense_Paymentsense</module>
 		  <class>Paymentsense_Paymentsense_Model_Resource_Eav_Mysql4_Setup</class>
@@ -21,17 +21,17 @@
         <connection>
           <use>core_setup</use>
         </connection>
-      </Paymentsense_setup>
-      <Paymentsense_write>
+      </paymentsense_setup>
+      <paymentsense_write>
         <connection>
           <use>core_write</use>
         </connection>
-      </Paymentsense_write>
-      <Paymentsense_read>
+      </paymentsense_write>
+      <paymentsense_read>
         <connection>
           <use>core_read</use>
         </connection>
-      </Paymentsense_read>
+      </paymentsense_read>
     </resources>
     <blocks>
       <Paymentsense>
