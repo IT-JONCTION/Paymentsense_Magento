@@ -5,6 +5,7 @@
             <codePool>local</codePool>
             <depends>
                 <Mage_Payment/>
+                <Braintree_Payments/>
             </depends>
         </Paymentsense_Paymentsense>
         <Paymentsense_Checkout>

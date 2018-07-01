@@ -1,6 +1,20 @@
 <?php
 
-class Paymentsense_Sales_Model_Order_Payment extends Mage_Sales_Model_Order_Payment
+/**
+ * We don't need to check class name
+ * if both modules (Paymentsense_Sales_Model_Order_Payment and Braintree_Payments_Model_Rewrite_Sales_Order_Payment) are enabled
+ *
+ * Checking this to make sure that we don't get any error
+ * when Braintree_Payments_Model_Rewrite_Sales_Order_Payment is disabled
+ */
+if (!@class_exists('Braintree_Payments_Model_Rewrite_Sales_Order_Payment')) {
+    class Braintree_Payments_Model_Rewrite_Sales_Order_Payment extends Mage_Catalog_Model_Product { }
+}
+
+/**
+ * Braintree_Payments_Model_Rewrite_Sales_Order_Payment will already be extending the core class
+ */
+class Paymentsense_Sales_Model_Order_Payment extends Braintree_Payments_Model_Rewrite_Sales_Order_Payment
 {	
     /**
      * Authorize or authorize and capture payment on gateway, if applicable
