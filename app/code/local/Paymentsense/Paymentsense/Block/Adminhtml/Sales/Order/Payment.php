@@ -9,7 +9,7 @@ class Paymentsense_Paymentsense_Block_Adminhtml_Sales_Order_Payment extends Mage
         if ($payment->getMethod() == 'Paymentsense')
         {
 
-            $paymentInfoBlock->setTemplate('payment/info/cc_Paymentsense.phtml');
+            $paymentInfoBlock->setTemplate('payment/info/cc_paymentsense.phtml');
         }
 
         $this->setChild('info', $paymentInfoBlock);

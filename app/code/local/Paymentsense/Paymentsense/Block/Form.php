@@ -4,7 +4,7 @@ class Paymentsense_Paymentsense_Block_Form extends Mage_Payment_Block_Form
  	protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('Paymentsense/form.phtml');
+        $this->setTemplate('paymentsense/form.phtml');
     }
     
     protected function _getConfig()
