@@ -5,7 +5,7 @@
          <version>0.0.1</version>
       </Paymentsense_Checkout>
    </modules>
-   <global>
+<!--   <global>
    		<models>
 	    	<checkout>
 	    		<rewrite>
@@ -13,5 +13,5 @@
 			    </rewrite>
 	    	</checkout>
 	    </models>
-   </global>
+   </global> Remove conflict with Cryozonic Stripe-->
 </config>
