@@ -6,6 +6,7 @@
             <depends>
                 <Mage_Payment/>
                 <Braintree_Payments/>
+                <Shipperhq_Splitrates/>
             </depends>
         </Paymentsense_Paymentsense>
         <Paymentsense_Checkout>

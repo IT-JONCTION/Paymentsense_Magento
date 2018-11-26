@@ -23,36 +23,42 @@
  * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
+if (!Mage::getStoreConfig('payment/Paymentsense/active')) {
+    class Paymentsense_Checkout_Block_Cart_Totals extends Mage_Checkout_Block_Cart_Totals { }
+}
+
+if (Mage::getStoreConfig('payment/Paymentsense/active')) {
 
 //class Mage_Checkout_Block_Cart_Totals extends Mage_Checkout_Block_Cart_Abstract
-class Paymentsense_Checkout_Block_Cart_Totals extends Mage_Checkout_Block_Cart_Totals
-{
-    /**
-     * Check if we have display grand total in base currency
-     *
-     * @return bool
-     */
-    public function needDisplayBaseGrandtotal()
+    class Paymentsense_Checkout_Block_Cart_Totals extends Mage_Checkout_Block_Cart_Totals
     {
-		$takePaymentInStoreBaseCurrency = Mage::getModel('Paymentsense/direct')->getConfigData('takePaymentInStoreBaseCurrency');
-		$quote = $this->getQuote();
-		
-		if ($quote->getPayment()->getMethod() == 'Paymentsense') {
-			if ($takePaymentInStoreBaseCurrency) {
-				if ($quote->getBaseCurrencyCode() != $quote->getQuoteCurrencyCode()) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}
-		
-		if ($quote->getBaseCurrencyCode() != $quote->getQuoteCurrencyCode()) {
-			return true;
-		}
-		
-        return false;
+        /**
+         * Check if we have display grand total in base currency
+         *
+         * @return bool
+         */
+        public function needDisplayBaseGrandtotal()
+        {
+            $takePaymentInStoreBaseCurrency = Mage::getModel('Paymentsense/direct')->getConfigData('takePaymentInStoreBaseCurrency');
+            $quote = $this->getQuote();
+
+            if ($quote->getPayment()->getMethod() == 'Paymentsense') {
+                if ($takePaymentInStoreBaseCurrency) {
+                    if ($quote->getBaseCurrencyCode() != $quote->getQuoteCurrencyCode()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+
+            if ($quote->getBaseCurrencyCode() != $quote->getQuoteCurrencyCode()) {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
