@@ -7,19 +7,19 @@
  * Checking this to make sure that we don't get any error
  * when Braintree_Payments_Model_Rewrite_Sales_Order_Payment is disabled
  */
-if (!@class_exists('Braintree_Payments_Model_Rewrite_Sales_Order_Payment')) {
-    class Braintree_Payments_Model_Rewrite_Sales_Order_Payment extends Mage_Sales_Model_Order_Payment { }
+if (!@class_exists('Mowdirect_Pending_Model_Order_Payment')) {
+    class Mowdirect_Pending_Model_Order_Payment extends Mage_Sales_Model_Order_Payment { }
 }
 
 if (!Mage::getStoreConfig('payment/Paymentsense/active')) {
-    class Paymentsense_Sales_Model_Order_Payment extends Braintree_Payments_Model_Rewrite_Sales_Order_Payment { }
+    class Paymentsense_Sales_Model_Order_Payment extends Mowdirect_Pending_Model_Order_Payment { }
 }
 
 if (Mage::getStoreConfig('payment/Paymentsense/active')) {
     /**
      * Braintree_Payments_Model_Rewrite_Sales_Order_Payment will already be extending the core class
      */
-    class Paymentsense_Sales_Model_Order_Payment extends Braintree_Payments_Model_Rewrite_Sales_Order_Payment
+    class Paymentsense_Sales_Model_Order_Payment extends Mowdirect_Pending_Model_Order_Payment
     {
         /**
          * Authorize or authorize and capture payment on gateway, if applicable
