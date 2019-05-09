@@ -7,5 +7,9 @@ app/design/adminhtml/default/default/layout/paymentsense.xml  app/design/adminht
 app/design/adminhtml/default/default/template/paymentsense  app/design/adminhtml/default/default/template/paymentsense
 app/design/adminhtml/default/default/template/payment/info/cc_paymentsense.phtml  app/design/adminhtml/default/default/template/payment/info/cc_paymentsense.phtml
 app/design/adminhtml/base/default/template/paymentsense  app/design/adminhtml/base/default/template/paymentsense
+app/locale/en_US/Paymentsense_Payments.csv  app/locale/en_US/Paymentsense_Payments.csv
+app/locale/en_GB/Paymentsense_Payments.csv  app/locale/en_GB/Paymentsense_Payments.csv
 app/etc/modules/Paymentsense_All.xml  app/etc/modules/Paymentsense_All.xml
+app/etc/modules/Paymentsense_Payments.xml  app/etc/modules/Paymentsense_Payments.xml
 app/code/local/Paymentsense  app/code/local/Paymentsense
+app/code/community/Paymentsense  app/code/community/Paymentsense
