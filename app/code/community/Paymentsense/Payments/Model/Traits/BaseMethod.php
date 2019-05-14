@@ -111,8 +111,8 @@ trait Paymentsense_Payments_Model_Traits_BaseMethod
             case TransactionResultCode::SUCCESS:
                 $order
                     ->setState(
-                        Mage_Sales_Model_Order::STATE_PROCESSING,
-                        Mage_Sales_Model_Order::STATE_PROCESSING,
+                        Mage_Sales_Model_Order::STATE_NEW,
+                        false,
                         $message,
                         false
                     )
